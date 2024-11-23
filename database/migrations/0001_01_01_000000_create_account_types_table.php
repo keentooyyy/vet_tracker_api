@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('account_type', function (Blueprint $table) {
+        Schema::create('account_types', function (Blueprint $table) {
             $table->id();
-            $table->string('account_type_name')->unique();
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }

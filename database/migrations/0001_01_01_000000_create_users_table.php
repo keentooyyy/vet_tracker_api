@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->foreignId('account_type_id')->constrained('account_type')->onDelete('cascade');
+            $table->foreignId('account_type_id')->unsigned()->references('id')->on('account_types');
             $table->string('email')->unique();
             $table->string('fcm_token')->nullable(); // For Firebase notifications
             $table->timestamp('email_verified_at')->nullable();
