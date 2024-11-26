@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -30,10 +31,44 @@ class UserController extends Controller
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] = $user->createToken('VetTracker')->plainTextToken;
-        $success['first_name'] = $user->first_name;
 
         return response()->json([
             $success
         ]);
     }
+
+    public function login(Request $request)
+    {
+        $input = $request->all();
+        $email = $input['email'];
+        $password = $input['password'];
+
+        if(Auth::attempt(['email' => $email, 'password' => $password])) {
+            $user = Auth::user();
+            $success['token'] = $user->createToken('VetTracker')->plainTextToken;
+
+            return response()->json([
+                $success
+            ]);
+        }
+        else{
+            return response()->json([
+               "unauthenticated"
+            ]);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        if (Auth::check()) {
+            Auth::user()->tokens()->delete();
+            return response()->json([
+                "Successfully logged out",
+            ]);
+        }
+        return response()->json([
+           'Invalid Request'
+        ],401);
+    }
+
 }
