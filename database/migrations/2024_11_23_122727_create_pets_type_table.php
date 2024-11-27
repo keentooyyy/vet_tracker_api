@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pets_type', function (Blueprint $table) {
+        Schema::create('pet_types', function (Blueprint $table) {
             $table->id();
             $table->string('type')->unique();
             $table->timestamps();

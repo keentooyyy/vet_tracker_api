@@ -14,8 +14,5 @@ class PetMedicalRecord extends Model
         'date_of_next_administration'
 
     ];
-    public function pets(){
-        return $this->belongsTo(Pet::class);
-    }
 
 }

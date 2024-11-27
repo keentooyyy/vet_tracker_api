@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PetResource;
+use App\Models\Pet;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -43,17 +46,16 @@ class UserController extends Controller
         $email = $input['email'];
         $password = $input['password'];
 
-        if(Auth::attempt(['email' => $email, 'password' => $password])) {
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = Auth::user();
             $success['token'] = $user->createToken('VetTracker')->plainTextToken;
 
             return response()->json([
                 $success
             ]);
-        }
-        else{
+        } else {
             return response()->json([
-               "unauthenticated"
+                "unauthenticated"
             ]);
         }
     }
@@ -67,8 +69,41 @@ class UserController extends Controller
             ]);
         }
         return response()->json([
-           'Invalid Request'
-        ],401);
+            'message' => 'Invalid Request'
+        ], 401);
+    }
+
+    public function getUser(User $id)
+    {
+        $currentUser = Auth::user();
+        $toCheckUser = User::get()->findorFail($id);
+
+
+        if ($currentUser->id === $toCheckUser->id) {
+            $pets = $currentUser->pets()->with('petType')->get()->map(function ($pet) {
+                $birthdate = Carbon::parse($pet->birthdate);
+                $age = round($birthdate->diffInYears(Carbon::now()));
+
+                $type = $pet->petType ? $pet->petType->type : 'Unknown';
+
+                return [
+                    'id' => $pet->id,
+                    'name' => $pet->name,
+                    'age' => $age,
+                    'birthdate' => $pet->birthdate,
+                    'gender' => $pet->gender,
+                    'type' => $type,
+                    'breed' => $pet->breed,
+                ];
+            });
+
+            return response()->json([
+                'user' => $currentUser->only(['id', 'first_name', 'last_name', 'email']),
+                'pets' => $pets,
+            ]);
+        }
+
+        return response()->json(["Unauthorized"], 401);
     }
 
 }

@@ -35,17 +35,14 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function pets()
+    public function pets(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Pet::class);
     }
 
-    public function notifications()
+    public function notifications(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Notification::class);
-    }
-    public function petMedicalRecords(){
-        return $this->hasMany(PetMedicalRecord::class , 'vet_id');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Pet extends Model
@@ -16,14 +17,14 @@ class Pet extends Model
         'color',
     ];
 
-    public function petType()
+    public function petType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(PetType::class);
     }
-    public function user(){
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
-    public function medicalRecords(){
-        return $this->hasMany(PetMedicalRecord::class);
-    }
+
 }
