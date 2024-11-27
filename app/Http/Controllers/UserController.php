@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PetResource;
 use App\Models\Pet;
 use App\Models\User;
 use Carbon\Carbon;
@@ -82,23 +83,7 @@ class UserController extends Controller
 
 
         if ($currentUser->id === $toCheckUser->id) {
-            $pets = $currentUser->pets()->with('petType')->get()->map(function ($pet) {
-                $birthdate = Carbon::parse($pet->birthdate);
-                $age = round($birthdate->diffInYears(Carbon::now()));
-
-                $type = $pet->petType ? $pet->petType->type : 'Unknown';
-
-                return [
-                    'id' => $pet->id,
-                    'name' => $pet->name,
-                    'age' => $age,
-                    'birthdate' => $pet->birthdate,
-                    'gender' => $pet->gender,
-                    'type' => $type,
-                    'breed' => $pet->breed,
-                ];
-            });
-
+            $pets = PetResource::collection($currentUser->pets()->with('petType')->get());
             return response()->json([
                 'user' => $currentUser->only(['id', 'first_name', 'last_name', 'email', 'brgy', 'city','street']),
                 'pets' => $pets,
