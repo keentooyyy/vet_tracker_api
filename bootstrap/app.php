@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'check.account.type' => \App\Http\Middleware\CheckAccountType::class],
+            );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -11,20 +11,13 @@ class Pet extends Model
         'pet_type_id',
         'user_id',
         'name',
-        'age',
-        'weight',
         'breed',
-        'color',
+        'birthdate',
     ];
 
     public function petType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(PetType::class);
-    }
-
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
 }

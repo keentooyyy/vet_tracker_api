@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PetResource;
 use App\Models\Pet;
 use App\Models\User;
 use Carbon\Carbon;
@@ -21,6 +20,9 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
+            'brgy' => 'sometimes',
+            'city' => 'sometimes',
+            'street' => 'sometimes',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -98,7 +100,7 @@ class UserController extends Controller
             });
 
             return response()->json([
-                'user' => $currentUser->only(['id', 'first_name', 'last_name', 'email']),
+                'user' => $currentUser->only(['id', 'first_name', 'last_name', 'email', 'brgy', 'city','street']),
                 'pets' => $pets,
             ]);
         }

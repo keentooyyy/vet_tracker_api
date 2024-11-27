@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('street')->nullable();
+            $table->string('brgy')->nullable();
+            $table->string('city')->nullable();
             $table->enum('account_type', ['vets', 'users'])->default('users');
             $table->string('email')->unique();
             $table->string('fcm_token')->nullable(); // For Firebase notifications
