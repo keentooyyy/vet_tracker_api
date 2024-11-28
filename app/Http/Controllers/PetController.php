@@ -24,7 +24,7 @@ class PetController extends Controller
                 'user_id' => 'required|in:'. $currentUser->id,
                 'name' => 'required|string',
                 'breed' => 'required|string',
-                'birthdate' => 'required|date|date_format:Y/m/d',
+                'birthdate' => 'required|date|date_format:Y-m-d',
             ]);
 
             if($validator->fails()){
