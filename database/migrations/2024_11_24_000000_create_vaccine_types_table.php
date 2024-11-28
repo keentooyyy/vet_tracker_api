@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pet_medical_records', function (Blueprint $table) {
+        Schema::create('vaccine_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pet_id')->constrained('pets')->onDelete('cascade');
-            $table->date('date_of_administration');
-            $table->date('date_of_next_administration');
-            $table->foreignId('vaccine_id')->constrained('vaccine_types')->onDelete('cascade');
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pet_medical_record');
+        Schema::dropIfExists('vaccine_types');
     }
 };

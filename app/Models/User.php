@@ -43,10 +43,6 @@ class User extends Authenticatable
         return $this->hasMany(Pet::class);
     }
 
-    public function notifications(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Notification::class);
-    }
 
     /**
      * Get the attributes that should be cast.

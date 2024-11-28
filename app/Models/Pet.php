@@ -15,9 +15,18 @@ class Pet extends Model
         'birthdate',
     ];
 
-    public function petType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function petType()
     {
         return $this->belongsTo(PetType::class);
+    }
+
+    public function medicalRecords(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PetMedicalRecord::class);
     }
 
 }
