@@ -19,7 +19,7 @@ class Pet extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function petType()
+    public function petType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(PetType::class);
     }
@@ -27,6 +27,10 @@ class Pet extends Model
     public function medicalRecords(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(PetMedicalRecord::class);
+    }
+    public function appointments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Appointment::class);
     }
 
 }

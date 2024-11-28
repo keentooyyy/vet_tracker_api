@@ -24,4 +24,11 @@ class PetTypeController extends Controller
             $petType
         ]);
     }
+    public function getPetTypes()
+    {
+        $petTypes = PetType::all();
+        return response()->json([
+            'types'=>$petTypes->pluck('type')
+        ]);
+    }
 }

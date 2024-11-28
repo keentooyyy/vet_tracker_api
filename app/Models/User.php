@@ -42,6 +42,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pet::class);
     }
+    public function appointments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
 
 
     /**
