@@ -14,6 +14,8 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     Route::post('/create_new_pet_type', [PetTypeController::class, 'createPetType']);
     Route::get('/get_pet_types', [PetTypeController::class, 'getPetTypes']);
     Route::post('/logout', [UserController::class, 'logout']);
+
+    Route::get('/get_pets/{user_id}', [PetController::class, 'showPets']);
 });
 
 

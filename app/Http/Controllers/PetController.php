@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PetMedicalRecordResource;
+use App\Http\Resources\PetResource;
 use App\Models\Pet;
 use App\Models\PetMedicalRecord;
 use App\Models\User;
@@ -53,7 +54,7 @@ class PetController extends Controller
         $checkUser = User::get()->findorFail($user_id);
 
         if ($currentUser->id === $checkUser->id) {
-            $pet = Pet::get()->find($pet_id);
+            $pet = Pet::get()->findorFail($pet_id);
             $medicalRecords = $pet->medicalRecords()->with('vaccine')->get();
             $resourcedMedicalRecords = PetMedicalRecordResource::collection($medicalRecords);
             return response()->json([
@@ -64,5 +65,15 @@ class PetController extends Controller
         return response()->json([
             'Unauthorized'
         ]);
+    }
+
+    public function showPets(User $user_id){
+//        dd($user_id->id);
+        $pets = Pet::with('user')->where('user_id', $user_id->id)->get();
+//        dd($pets);
+//        $pets = PetMedicalRecordResource::collection($pets);
+     return response()->json([
+         'pet' => $pets
+     ]);
     }
 }
