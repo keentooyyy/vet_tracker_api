@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PetResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,11 +33,13 @@ class UserController extends Controller
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $success['token'] = $user->createToken('VetTracker')->plainTextToken;
+        $token['token'] = $user->createToken('VetTracker')->plainTextToken;
+        $data = [
+            'id' => $user->id,
+            'token'=> $token['token'],
+        ];
 
-        return response()->json([
-            $success
-        ]);
+        return response()->json($data);
     }
 
     public function login(Request $request)
@@ -50,10 +51,14 @@ class UserController extends Controller
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = Auth::user();
             $success['token'] = $user->createToken('VetTracker')->plainTextToken;
-
-            return response()->json([
-                $success
-            ]);
+            $token = $success['token'];
+//            dd($token);
+            return response()->json(
+                [
+                    'id' => Auth::id(),
+                    'token'=>$token
+                ]
+            );
         } else {
             return response()->json([
                 "unauthenticated"
@@ -63,28 +68,28 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        if (Auth::check()) {
-            Auth::user()->tokens()->delete();
+        if (auth()->check()) {
+            auth()->user()->tokens()->delete();
             return response()->json([
                 "Successfully logged out",
             ]);
         }
         return response()->json([
             'message' => 'Invalid Request'
-        ], 401);
+        ]);
     }
 
     public function getUser(User $id)
     {
-        $currentUser = Auth::user();
+        $currentUser = auth()->user();
         $toCheckUser = User::get()->findorFail($id);
-
-
         if ($currentUser->id === $toCheckUser->id) {
-            $pets = PetResource::collection($currentUser->pets()->with('petType')->get());
+            $pets = $currentUser->pets()->with('petType')->get();
+//            $appointments = $currentUser->appointments()->with('pet')->get();
             return response()->json([
-                'user' => $currentUser->only(['id', 'first_name', 'last_name', 'email', 'brgy', 'city','street']),
-                'pets' => $pets,
+                'user' => $currentUser,
+//                'pets' => $pets,
+//                'appointments' => $appointments,
             ]);
         }
 
