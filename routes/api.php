@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\PetController;
-use App\Http\Controllers\PetTypeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::post('user/register', [UserController::class, 'register']);
 Route::post('user/login', [UserController::class, 'login']);
+
+
+//helper route for get pet types
+Route::get('/get_pet_type', [PetController::class, 'getPetType']);
 
 
 Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
@@ -24,8 +28,7 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
 
 
-    //helper route for get pet types
-    Route::get('/get_pet_type', [PetTypeController::class, 'getPetTypes']);
+
 
     //helper get pet by id
     Route::get('/get_pet/{pet_id}', [PetController::class, 'findPet']);
