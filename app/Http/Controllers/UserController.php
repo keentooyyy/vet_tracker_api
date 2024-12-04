@@ -37,7 +37,7 @@ class UserController extends Controller
         $token['token'] = $user->createToken('VetTracker')->plainTextToken;
         $data = [
             'id' => $user->id,
-            'token'=> $token['token'],
+            'token' => $token['token'],
         ];
 
         return response()->json($data);
@@ -49,7 +49,8 @@ class UserController extends Controller
         $email = $input['email'];
         $password = $input['password'];
 //        auth()->attempt(['email' => $email, 'password' => $password]);
-        if (auth()->attempt(['email' => $email, 'password' => $password])) {
+//        if (auth()->attempt(['email' => $email, 'password' => $password])) {
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = auth()->user();
             $success['token'] = $user->createToken('VetTracker')->plainTextToken;
             $token = $success['token'];
@@ -57,7 +58,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     'id' => auth()->id(),
-                    'token'=>$token
+                    'token' => $token
                 ]
             );
         } else {
@@ -69,8 +70,8 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        if (auth()->check()) {
-            auth()->user()->tokens()->delete();
+        if (Auth::check()) {
+            Auth::user()->tokens()->delete();
             return response()->json([
                 "Successfully logged out",
             ]);
@@ -82,7 +83,7 @@ class UserController extends Controller
 
     public function getUser(User $id)
     {
-        $currentUser = auth()->user();
+        $currentUser = Auth::user();
         $toCheckUser = User::get()->findorFail($id);
         if ($currentUser->id === $toCheckUser->id) {
             $pets = $currentUser->pets()->with('petType')->get();
@@ -97,19 +98,20 @@ class UserController extends Controller
         return response()->json(["Unauthorized"], 401);
     }
 
-    public function editPet(User $user_id, Pet $pet_id){
+    public function editPet(User $user_id, Pet $pet_id)
+    {
 
-        $currentUser = auth()->user();
+        $currentUser = Auth::user();
         $toCheckUser = User::get()->findorFail($user_id);
 
-        if($currentUser->id === $toCheckUser->id){
+        if ($currentUser->id === $toCheckUser->id) {
             $pet = Pet::where('user_id', $user_id->id)->findorFail($pet_id);
             return response()->json([
                 'data' => $pet
             ]);
         }
         return response()->json([
-           'message' => "Unauthorized"
+            'message' => "Unauthorized"
         ]);
     }
 

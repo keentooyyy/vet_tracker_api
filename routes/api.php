@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetTypeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('user/register', [UserController::class, 'register']);
 Route::post('user/login', [UserController::class, 'login']);
 
-Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
+Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
+    //get user
+    Route::get('/{id}', [UserController::class, 'getUser']);
 
     //get user pets
     Route::get('{user_id}/pets', [PetController::class, 'getPets']);
@@ -22,11 +24,11 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
 
 
+    //helper route for get pet types
+    Route::get('/get_pet_type', [PetTypeController::class, 'getPetTypes']);
+
     //helper get pet by id
     Route::get('/get_pet/{pet_id}', [PetController::class, 'findPet']);
-
-    //helper route for get pet types
-    Route::get('/get_pet_types', [PetTypeController::class, 'getPetTypes']);
 
     //helper route for logout
     Route::post('/logout', [UserController::class, 'logout']);
@@ -34,6 +36,6 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 });
 
 
-//vet only Routes
-Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
-});
+////vet only Routes
+//Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
+//});

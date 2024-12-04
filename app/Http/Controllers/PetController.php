@@ -10,9 +10,8 @@ use Illuminate\Support\Facades\Validator;
 
 class PetController extends Controller
 {
-    //
     public function getPets(User $user_id){
-        $currentuser = auth()->user();
+        $currentuser = Auth::user();
         $toCheckUser = User::get()->findorFail($user_id);
 
         if ($currentuser->id === $toCheckUser->id) {
