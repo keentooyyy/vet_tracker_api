@@ -9,7 +9,4 @@ use Illuminate\Support\Facades\Validator;
 
 class PetMedicalRecordController extends Controller
 {
-    public function createPetMedicalRecord(Pet $pet_id, Request $request){
-
-    }
 }
