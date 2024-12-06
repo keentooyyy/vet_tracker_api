@@ -98,44 +98,6 @@ class UserController extends Controller
         return response()->json(["Unauthorized"], 401);
     }
 
-    public function editPet(User $user_id, Pet $pet_id, Request $request)
-    {
 
-        $currentUser = Auth::user();
-        $toCheckUser = User::get()->findorFail($user_id);
-
-        if ($currentUser->id === $toCheckUser->id) {
-
-
-
-            $pet = Pet::get()->where('user_id', $user_id->id)->findorFail($pet_id);
-            $validator = Validator::make(request()->all(), [
-                'name' => 'required|string',
-                'breed' => 'required|string',
-                'birthdate' => 'required|date|date_format:Y-m-d',
-                'pet_type_id' => 'required|exists:pet_types,id',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'errors' => [
-                        'name' => 'The name can only contain letters (no numbers, special characters, or spaces).',
-                        'breed' => 'The breed can only contain letters (no numbers, special characters).',
-                    ]
-                ], 422);
-            }
-
-            $input = $request->all();
-            $update = $pet->update($input);
-
-
-            return response()->json([
-                'data' => $update
-            ]);
-
-        }
-        return response()->json(['message'=>"Unauthorized"], 401);
-
-    }
 
 }

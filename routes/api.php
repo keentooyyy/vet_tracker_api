@@ -21,7 +21,7 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     Route::get('{user_id}/pets', [PetController::class, 'getPets']);
 
     //edit pet by pet id and user id
-    Route::patch('{user_id}/edit_pet/{pet_id}', [UserController::class, 'editPet']);
+    Route::patch('{user_id}/edit_pet/{pet_id}', [PetController::class, 'editPet']);
 
 
 
@@ -29,6 +29,9 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
 
 
+
+    //helper create pet
+    Route::post('/create_pet',[PetController::class, 'createPet']);
 
     //helper get pet by id
     Route::get('/get_pet/{pet_id}', [PetController::class, 'findPet']);
