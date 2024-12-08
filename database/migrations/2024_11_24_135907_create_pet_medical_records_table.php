@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pet_id')->constrained('pets')->onDelete('cascade');
             $table->date('date_of_administration');
-            $table->date('date_of_next_administration');
+            $table->date('date_of_next_administration')->nullable();
+            $table->boolean('is_fully_vaccinated')->default(false);
             $table->foreignId('vaccine_id')->constrained('vaccine_types')->onDelete('cascade');
             $table->timestamps();
         });

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pet;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +19,10 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
-            'brgy' => 'sometimes',
-            'city' => 'sometimes',
-            'street' => 'sometimes',
+            'brgy' => 'required',
+            'city' => 'required',
+            'street' => 'required',
+            'fcm' => 'sometimes',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -50,14 +51,21 @@ class UserController extends Controller
         $password = $input['password'];
 //        auth()->attempt(['email' => $email, 'password' => $password]);
 //        if (auth()->attempt(['email' => $email, 'password' => $password])) {
+
+        $fcmToken = $input['fcm_token'] ?? null;
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
-            $user = auth()->user();
+            $user = Auth::user();
+
+            if ($fcmToken) {
+                $user->update(['fcm_token' => $fcmToken]);
+            }
+
             $success['token'] = $user->createToken('VetTracker')->plainTextToken;
             $token = $success['token'];
 //            dd($token);
             return response()->json(
                 [
-                    'id' => auth()->id(),
+                    'id' => Auth::user()->id,
                     'token' => $token
                 ]
             );
@@ -68,7 +76,7 @@ class UserController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         if (Auth::check()) {
             Auth::user()->tokens()->delete();

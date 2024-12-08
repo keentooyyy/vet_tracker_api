@@ -7,43 +7,62 @@ use App\Models\Pet;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AppointmentController extends Controller
 {
     public function createAppointment(User $user_id)
     {
-        $validator = Validator::make(request()->all(),[
-            'pet_id' => 'required|exists:pets,id',
-            'start_time' => 'required|date|after_or_equal:' . Carbon::today()->setHour(8)->setMinute(0)->toDateTimeString(),
-            'end_time' => 'nullable|date|after:start_time',
-            'purpose' => 'required|string',
-        ]);
+        $currentUser = Auth::user();
+        $toCheckUser = User::get()->findorFail($user_id);
 
-        $startTime = Carbon::parse($validator['start_time']);
-        if ($startTime->hour < 8 || $startTime->hour >= 17) {
-            return response()->json(['message' => 'Appointments can only be scheduled between 8 AM and 5 PM.'], 400);
+        if($currentUser->id === $toCheckUser->id) {
+
+
+            $validator = Validator::make(request()->all(), [
+                'pet_id' => 'required|exists:pets,id',
+                'start_time' => 'required|date|after_or_equal:' . Carbon::today()->setHour(8)->setMinute(0)->toDateTimeString(),
+                'end_time' => 'nullable|date|after:start_time',
+                'purpose' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 400);
+            }
+
+            // Get validated data
+            $validatedData = $validator->validated();  // Make sure you're using validated() here
+
+            $startTime = Carbon::parse($validatedData['start_time']);  // Use validated data instead of validator object
+            if ($startTime->hour < 8 || $startTime->hour >= 17) {
+                return response()->json(['message' => 'Appointments can only be scheduled between 8 AM and 5 PM.'], 400);
+            }
+
+            if (empty($validatedData['end_time'])) {
+                $validatedData['end_time'] = $startTime->copy()->addHour();
+            }
+
+            $pet = Pet::findOrFail($validatedData['pet_id']);
+
+            $appointment = Appointment::create([
+                'user_id' => $user_id->id,
+                'pet_id' => $pet->id,
+                'start_time' => $validatedData['start_time'],
+                'end_time' => $validatedData['end_time'],
+                'purpose' => $validatedData['purpose'],
+                'appointment_status' => 'booked',
+            ]);
+
+            return response()->json([
+                'appointment' => $appointment,
+            ], 201);
         }
-
-        if (!$validator['end_time']) {
-            $validator['end_time'] = $startTime->copy()->addHour();
-        }
-
-        $pet = Pet::findOrFail($validator['pet_id']);
-
-        $appointment = Appointment::create([
-            'user_id' => $user_id,
-            'pet_id' => $pet->id,
-            'start_time' => $validator['start_time'],
-            'end_time' => $validator['end_time'],
-            'purpose' => $validator['purpose'],
-            'appointment_status' => 'booked',
-        ]);
-
         return response()->json([
-            'message' => 'Appointment successfully created.',
-            'appointment' => $appointment,
-        ], 201);
+           'Unauthorized',
+        ]);
+
+
     }
 
     public function updateAppointmentStatus(Request $request, $appointmentId)

@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Validator;
 class PetController extends Controller
 {
 
-    public function getPets(User $user_id){
+    public function getPets(User $user_id)
+    {
         $currentuser = Auth::user();
         $toCheckUser = User::get()->findorFail($user_id);
 
         if ($currentuser->id === $toCheckUser->id) {
             $pet = Pet::where('user_id', $user_id->id)
-                ->with(['appointments' => function($query) {
+                ->with(['appointments' => function ($query) {
                     $query->where('appointment_status', 'booked')->orderBy('start_time', 'asc');
                 }])
                 ->get();
@@ -27,10 +28,9 @@ class PetController extends Controller
             return response()->json([
                 'pets' => $pet,
             ]);
-        }
-        else {
+        } else {
             return response()->json([
-               'Unauthorized'
+                'Unauthorized'
             ]);
         }
 
@@ -49,13 +49,13 @@ class PetController extends Controller
     {
         $pet_types = PetType::all();
         return response()->json([
-           'types'=>$pet_types
+            'types' => $pet_types
         ]);
     }
 
     public function createPet(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'breed' => 'required|string',
             'birthdate' => 'required|date|date_format:Y-m-d',
@@ -72,6 +72,7 @@ class PetController extends Controller
         ]);
 
     }
+
     public function editPet(User $user_id, Pet $pet_id, Request $request)
     {
 
@@ -79,7 +80,6 @@ class PetController extends Controller
         $toCheckUser = User::get()->findorFail($user_id);
 
         if ($currentUser->id === $toCheckUser->id) {
-
 
 
             $pet = Pet::get()->where('user_id', $user_id->id)->findorFail($pet_id);
@@ -105,7 +105,24 @@ class PetController extends Controller
             ]);
 
         }
-        return response()->json(['message'=>"Unauthorized"], 401);
+        return response()->json(['message' => "Unauthorized"], 401);
+
+    }
+
+    public function deletePet(User $user_id, Pet $pet_id)
+    {
+        $currentUser = Auth::user();
+        $toCheckUser = User::get()->findorFail($user_id);
+
+        if ($currentUser->id === $toCheckUser->id) {
+            $pet = Pet::get()->findorFail($pet_id);
+
+            $deleted_pet = $pet->delete();
+            return response()->json([
+                $deleted_pet
+            ]);
+        }
+        return response()->json(['message' => "Unauthorized"], 401);
 
     }
 }
