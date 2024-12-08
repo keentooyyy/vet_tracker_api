@@ -55,6 +55,6 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 });
 
 
-////vet only Routes
-//Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
-//});
+//vet only Routes
+Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
+});
