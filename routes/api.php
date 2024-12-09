@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\VetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\PetMedicalRecordController;
@@ -57,4 +58,13 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
 //vet only Routes
 Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
+
+    //get all
+    Route::get('/get_all_pet_user', [VetController::class, 'getAllPetsAndUsers']);
+
+    //create vaccine
+    Route::post('/create_new_vaccine', [VetController::class, 'createNewVaccine']);
+
+    //delete vaccine
+    Route::delete('/delete_vaccine/{vaccine_id}', [VetController::class, 'deleteVaccine']);
 });

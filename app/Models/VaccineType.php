@@ -8,7 +8,7 @@ class VaccineType extends Model
 {
     //
     protected $fillable = [
-        'type'
+        'name'
     ];
 
     public function medicalRecords(): \Illuminate\Database\Eloquent\Relations\HasMany

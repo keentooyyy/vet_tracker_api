@@ -18,7 +18,7 @@ class PetController extends Controller
         $currentuser = Auth::user();
         $toCheckUser = User::get()->findorFail($user_id);
 
-        if ($currentuser->id === $toCheckUser->id) {
+        if ($currentuser->id === $toCheckUser->id || $currentuser->account_type === 'vets') {
             $pet = Pet::where('user_id', $user_id->id)
                 ->with(['appointments' => function ($query) {
                     $query->where('appointment_status', 'booked')->orderBy('start_time', 'asc');
