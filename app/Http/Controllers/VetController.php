@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
+use App\Models\PetType;
 use App\Models\User;
 use App\Models\VaccineType;
 use Illuminate\Http\Request;
@@ -37,6 +38,21 @@ class VetController extends Controller
         $vaccine->delete();
         return response()->json([
             'vaccine' => $vaccine
+        ]);
+    }
+
+    public function createSpecies(Request $request){
+        $validator = Validator::make($request->all(), [
+           'type' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors'=>$validator->errors()]);
+        }
+        $input = $request->all();
+        $type = PetType::create($input);
+        return response()->json([
+           'type' => $type
         ]);
     }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('breed')->nullable();
             $table->enum('gender', ['male', 'female'])->default('male');
             $table->date('birthdate')->nullable();
+            $table->boolean('is_fully_vaccinated')->default(false);
             $table->timestamps();
         });
     }

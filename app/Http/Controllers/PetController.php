@@ -66,9 +66,10 @@ class PetController extends Controller
         }
 
         $input = $request->all();
-        $pet = Pet::create($input);
+        $created_pet = Pet::create($input);
+
         return response()->json([
-            'pets' => $pet,
+            'Success'
         ]);
 
     }
@@ -79,7 +80,7 @@ class PetController extends Controller
         $currentUser = Auth::user();
         $toCheckUser = User::get()->findorFail($user_id);
 
-        if ($currentUser->id === $toCheckUser->id) {
+        if ($currentUser->id === $toCheckUser->id || $currentUser->account_type == 'vets') {
 
 
             $pet = Pet::get()->where('user_id', $user_id->id)->findorFail($pet_id);

@@ -126,9 +126,19 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function showAllAppointment(Request $request)
+    public function showAllAppointment()
     {
-        $appointments = Appointment::all();
+        $today = Carbon::today();
+
+        // Fetch appointments for today with status "booked"
+        $appointments = Appointment::whereDate('start_time', $today)
+            ->where('appointment_status', 'booked')
+            ->get()
+            ->map(function ($appointment) {
+                // Format start_time to whole hour (e.g., "19:00:00")
+                $appointment->start_time = Carbon::parse($appointment->start_time)->format('H:00:00');
+                return $appointment;
+            });
 
         return response()->json([
             'appointments' => $appointments,

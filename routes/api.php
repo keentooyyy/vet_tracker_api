@@ -20,7 +20,11 @@ Route::get('/get_pet_type', [PetController::class, 'getPetType']);
 Route::get('/get_vaccines',[VaccineTypeController::class, 'getVaccineTypes']);
 
 
+
+
 Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
+
+
     //get user
     Route::get('/{id}', [UserController::class, 'getUser']);
 
@@ -44,11 +48,10 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
 
 
+
+
     //helper create pet
     Route::post('/create_pet',[PetController::class, 'createPet']);
-
-    //helper get pet by id
-    Route::get('/get_pet/{pet_id}', [PetController::class, 'findPet']);
 
     //helper route for logout
     Route::post('/logout', [UserController::class, 'logout']);
@@ -67,4 +70,10 @@ Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->
 
     //delete vaccine
     Route::delete('/delete_vaccine/{vaccine_id}', [VetController::class, 'deleteVaccine']);
+
+    //create new species
+    Route::post('/create_species', [VetController::class, 'createSpecies']);
+
+    //show all appointments
+    Route::get('/show_all_appointments',[AppointmentController::class, 'showAllAppointment']);
 });
