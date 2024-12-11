@@ -55,4 +55,11 @@ class VetController extends Controller
            'type' => $type
         ]);
     }
+    public function deleteSpecies(PetType $pet_type_id){
+        $pet_type = VaccineType::get()->findorFail($pet_type_id);
+        $pet_type->delete();
+        return response()->json([
+            'type' => $pet_type
+        ]);
+    }
 }

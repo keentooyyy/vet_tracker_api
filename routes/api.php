@@ -74,6 +74,9 @@ Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->
     //create new species
     Route::post('/create_species', [VetController::class, 'createSpecies']);
 
+    //delete species
+    Route::delete('/delete_species/{pet_type_id}', [VetController::class, 'deleteSpecies']);
+
     //show all appointments
     Route::get('/show_all_appointments',[AppointmentController::class, 'showAllAppointment']);
 });
