@@ -83,10 +83,13 @@ Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->
     //show all appointments
     Route::get('/show_all_appointments',[AppointmentController::class, 'showAllAppointment']);
 
+    //complete an Appointment
+    Route::patch('/update_appointment/{appointmentId}',[AppointmentController::class, 'updateAppointmentStatus']);
+
     //create medical record for pet
     Route::post('/create_medical_record', [PetMedicalRecordController::class, 'createMedicalRecords']);
 
-    //
+    //delete medical record for pet
     Route::delete('/delete_medical_record/{medical_record}', [PetMedicalRecordController::class, 'deleteMedicalRecord']);
 
     //update vaccination status of pet

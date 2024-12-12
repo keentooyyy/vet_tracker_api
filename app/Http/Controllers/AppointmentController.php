@@ -84,21 +84,12 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::findOrFail($appointmentId);
 
-        if ($request->appointment_status === 'completed' && $appointment->appointment_status !== 'completed') {
-            $appointment->update([
-                'appointment_status' => 'completed',
-                'end_time' => Carbon::now(),
-            ]);
-        } else {
-            $appointment->update([
-                'appointment_status' => $request->appointment_status,
-                'end_time' => $request->appointment_status === 'canceled' ? Carbon::today()->setHour(17)->setMinute(0)->setSecond(0) : null,
-            ]);
-        }
+        $appointment->update([
+            'appointment_status' => $request->appointment_status
+        ]);
 
         return response()->json([
             'message' => 'Appointment status updated successfully.',
-            'appointment' => $appointment,
         ]);
     }
 
