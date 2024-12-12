@@ -126,10 +126,10 @@ class PetController extends Controller
         return response()->json(['message' => "Unauthorized"], 401);
 
     }
-    public function updateVaccinationStatus(Request $request, Pet $pet_id)
+    public function updateVaccinationStatus(Request $request, $pet_id)
     {
-        // Find the pet by ID
-        $pet = Pet::find($pet_id);
+        // Find the pet by ID (correctly pass the ID as a parameter)
+        $pet = Pet::find($pet_id);  // Ensure you're querying by ID
 
         if (!$pet) {
             return response()->json([
@@ -144,11 +144,12 @@ class PetController extends Controller
         ]);
 
         // Update the vaccination status
-        $pet->is_fully_vaccinated = $validated['is_fully_vaccinated'];
-        $pet->save();
+        $pet->is_fully_vaccinated = $validated['is_fully_vaccinated'];  // Set the value directly
+        $pet->save();  // Save the updated pet
 
         return response()->json([
             'message' => 'Vaccination status updated successfully.',
         ]);
     }
+
 }

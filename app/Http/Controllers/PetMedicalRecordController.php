@@ -16,6 +16,15 @@ class PetMedicalRecordController extends Controller
             'records' => $medical_records
         ]);
     }
+    public function deleteMedicalRecord(PetMedicalRecord $medical_record){
+        $medical_record = PetMedicalRecord::get()->findorFail($medical_record);
+
+        $medical_record->delete();
+
+        return response()->json([
+           'message' => 'Record deleted'
+        ]);
+    }
     public function createMedicalRecords(Request $request)
     {
         // Validate incoming request

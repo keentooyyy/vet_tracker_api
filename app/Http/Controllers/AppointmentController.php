@@ -15,7 +15,7 @@ class AppointmentController extends Controller
     public function createAppointment(User $user_id)
     {
         $currentUser = Auth::user();
-        $toCheckUser = User::findOrFail($user_id);
+        $toCheckUser = User::get()->findOrFail($user_id);
 
         // Check if current user is allowed to create appointment
         if ($currentUser->id === $toCheckUser->id || $currentUser->account_type === 'vets') {
@@ -23,8 +23,8 @@ class AppointmentController extends Controller
             // Validation rules for input, ensuring only date and hour are considered
             $validator = Validator::make(request()->all(), [
                 'pet_id' => 'required|exists:pets,id',
-                'start_time' => 'required|date_format:Y-m-d H|after_or_equal:' . Carbon::today()->setHour(8)->setMinute(0)->toDateTimeString(),
-                'end_time' => 'nullable|date_format:Y-m-d H|after:start_time',
+                'start_time' => 'required|date|after_or_equal:' . Carbon::today()->setHour(8)->setMinute(0)->toDateTimeString(),
+                'end_time' => 'nullable|date|after:start_time',
                 'purpose' => 'required|string',
             ]);
 
