@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Notification;
 use App\Models\Pet;
 use App\Models\User;
 use Carbon\Carbon;
@@ -65,6 +66,16 @@ class AppointmentController extends Controller
                 'appointment_status' => 'booked',
             ]);
 
+            $vet = User::where('account_type' , 'vets')->get()->first();
+
+             Notification::create([
+                'user_id' => $vet->id,
+                'title' => 'Appointment Booked',
+                'appointment_id' => $appointment->id,
+                'message' => $user_id->first_name . ' created an appointment for his pet ' . $pet->name . '.',
+            ]);
+
+
             // Return the created appointment
             return response()->json([
                 'appointment' => $appointment,
@@ -86,6 +97,21 @@ class AppointmentController extends Controller
 
         $appointment->update([
             'appointment_status' => $request->appointment_status
+        ]);
+
+
+        $send_to_user_id = $appointment->user_id;
+
+        // Get the pet relationship and pet's name
+        $pet = $appointment->pet; // Assuming Appointment has a 'pet' relationship
+        $pet_name = $pet ? $pet->name : 'Unknown pet'; // Handle cases where pet is not found
+
+        // Create the notification
+        Notification::create([
+            'user_id' => $send_to_user_id,
+            'title' => 'Appointment ' . $request->appointment_status,
+            'appointment_id' => $appointmentId,
+            'message' => 'The vet has marked the appointment for ' . $pet_name . ' as ' . $request->appointment_status,
         ]);
 
         return response()->json([

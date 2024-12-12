@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     //show all user appointments
     Route::get('/show_user_appointments/{user_id}',[AppointmentController::class, 'showUserAppointments']);
 
+    Route::get('/get_notifications/{user_id}', [UserController::class, 'getNotifications']);
 
 
 

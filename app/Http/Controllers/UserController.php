@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -106,6 +107,11 @@ class UserController extends Controller
         return response()->json(["Unauthorized"], 401);
     }
 
-
+    public function getNotifications(User $user_id){
+        $notifications = Notification::where('user_id', $user_id->id)->orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'notifications' => $notifications
+        ]);
+    }
 
 }

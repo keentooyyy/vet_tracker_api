@@ -11,6 +11,7 @@ class Notification extends Model
         'user_id',
         'title',
         'message',
+        'appointment_id'
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
