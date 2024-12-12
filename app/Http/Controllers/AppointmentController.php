@@ -42,10 +42,14 @@ class AppointmentController extends Controller
                 return response()->json(['message' => 'Appointments can only be scheduled between 8 AM and 5 PM.'], 400);
             }
 
-
-            $endTime = Carbon::parse($validatedData['end_time']);
-            if ($endTime->lessThan($startTime)) {
-                return response()->json(['message' => 'End time must be after start time.'], 400);
+            // If end_time is not provided, set it one hour after start_time
+            if (empty($validatedData['end_time'])) {
+                $validatedData['end_time'] = $startTime->copy()->addHour()->format('Y-m-d H');
+            } else {
+                $endTime = Carbon::parse($validatedData['end_time']);
+                if ($endTime->lessThan($startTime)) {
+                    return response()->json(['message' => 'End time must be after start time.'], 400);
+                }
             }
 
             // Find the pet based on pet_id

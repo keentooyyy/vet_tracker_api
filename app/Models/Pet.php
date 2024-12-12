@@ -13,6 +13,7 @@ class Pet extends Model
         'name',
         'breed',
         'birthdate',
+        'is_fully_vaccinated'
     ];
 
     public function user()

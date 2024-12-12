@@ -126,4 +126,29 @@ class PetController extends Controller
         return response()->json(['message' => "Unauthorized"], 401);
 
     }
+    public function updateVaccinationStatus(Request $request, Pet $pet_id)
+    {
+        // Find the pet by ID
+        $pet = Pet::find($pet_id);
+
+        if (!$pet) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pet not found.',
+            ], 404);  // Return 404 if pet not found
+        }
+
+        // Validate the request to ensure we are getting a valid vaccination status
+        $validated = $request->validate([
+            'is_fully_vaccinated' => 'required|boolean',
+        ]);
+
+        // Update the vaccination status
+        $pet->is_fully_vaccinated = $validated['is_fully_vaccinated'];
+        $pet->save();
+
+        return response()->json([
+            'message' => 'Vaccination status updated successfully.',
+        ]);
+    }
 }
