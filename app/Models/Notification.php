@@ -13,4 +13,9 @@ class Notification extends Model
         'message',
     ];
 
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);  // A notification belongs to a user
+    }
+
 }

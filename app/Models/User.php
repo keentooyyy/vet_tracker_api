@@ -47,6 +47,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Appointment::class);
     }
+    public function notifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Notification::class);  // A user has many notifications
+    }
 
 
     /**
