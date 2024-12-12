@@ -43,6 +43,8 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     //get medical record for a pet
     Route::get('pet/get_records/{pet_id}',[PetMedicalRecordController::class, 'getRecords']);
 
+    //complete an Appointment
+    Route::patch('/update_appointment/{appointmentId}',[AppointmentController::class, 'updateAppointmentStatus']);
 
     //show all user appointments
     Route::get('/show_user_appointments/{user_id}',[AppointmentController::class, 'showUserAppointments']);
