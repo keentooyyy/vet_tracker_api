@@ -15,36 +15,43 @@ class AppointmentController extends Controller
     public function createAppointment(User $user_id)
     {
         $currentUser = Auth::user();
-        $toCheckUser = User::get()->findorFail($user_id);
+        $toCheckUser = User::findOrFail($user_id);
 
-        if($currentUser->id === $toCheckUser->id) {
+        // Check if current user is allowed to create appointment
+        if ($currentUser->id === $toCheckUser->id || $currentUser->account_type === 'vets') {
 
-
+            // Validation rules for input, ensuring only date and hour are considered
             $validator = Validator::make(request()->all(), [
                 'pet_id' => 'required|exists:pets,id',
-                'start_time' => 'required|date|after_or_equal:' . Carbon::today()->setHour(8)->setMinute(0)->toDateTimeString(),
-                'end_time' => 'nullable|date|after:start_time',
+                'start_time' => 'required|date_format:Y-m-d H|after_or_equal:' . Carbon::today()->setHour(8)->setMinute(0)->toDateTimeString(),
+                'end_time' => 'nullable|date_format:Y-m-d H|after:start_time',
                 'purpose' => 'required|string',
             ]);
 
+            // If validation fails, return errors
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 400);
             }
 
             // Get validated data
-            $validatedData = $validator->validated();  // Make sure you're using validated() here
+            $validatedData = $validator->validated();
 
-            $startTime = Carbon::parse($validatedData['start_time']);  // Use validated data instead of validator object
+            // Ensure start_time is between 8 AM and 5 PM (hours only)
+            $startTime = Carbon::parse($validatedData['start_time']);
             if ($startTime->hour < 8 || $startTime->hour >= 17) {
                 return response()->json(['message' => 'Appointments can only be scheduled between 8 AM and 5 PM.'], 400);
             }
 
-            if (empty($validatedData['end_time'])) {
-                $validatedData['end_time'] = $startTime->copy()->addHour();
+
+            $endTime = Carbon::parse($validatedData['end_time']);
+            if ($endTime->lessThan($startTime)) {
+                return response()->json(['message' => 'End time must be after start time.'], 400);
             }
 
+            // Find the pet based on pet_id
             $pet = Pet::findOrFail($validatedData['pet_id']);
 
+            // Create the appointment
             $appointment = Appointment::create([
                 'user_id' => $user_id->id,
                 'pet_id' => $pet->id,
@@ -54,16 +61,18 @@ class AppointmentController extends Controller
                 'appointment_status' => 'booked',
             ]);
 
+            // Return the created appointment
             return response()->json([
                 'appointment' => $appointment,
             ], 201);
         }
+
+        // If unauthorized, return an error
         return response()->json([
-           'Unauthorized',
-        ]);
-
-
+            'message' => 'Unauthorized',
+        ], 403);
     }
+
 
     public function updateAppointmentStatus(Request $request, $appointmentId)
     {
@@ -117,32 +126,36 @@ class AppointmentController extends Controller
         return response()->json(['message' => 'It is not past 5 PM yet. No appointments canceled.']);
     }
 
-    public function showAppointment($appointmentId)
+//    public function showAppointment($appointmentId)
+//    {
+//        $appointment = Appointment::findOrFail($appointmentId);
+//
+//        return response()->json([
+//            'appointment' => $appointment,
+//        ]);
+//    }
+
+    public function showUserAppointments(User $user_id)
     {
-        $appointment = Appointment::findOrFail($appointmentId);
-
-        return response()->json([
-            'appointment' => $appointment,
-        ]);
-    }
-
-    public function showAllAppointment()
-    {
-        $today = Carbon::today();
-
-        // Fetch appointments for today with status "booked"
-        $appointments = Appointment::whereDate('start_time', $today)
+        $appointments = Appointment::where('user_id', $user_id->id)
             ->where('appointment_status', 'booked')
-            ->get()
-            ->map(function ($appointment) {
-                // Format start_time to whole hour (e.g., "19:00:00")
-                $appointment->start_time = Carbon::parse($appointment->start_time)->format('H:00:00');
-                return $appointment;
-            });
+            ->get();
 
         return response()->json([
             'appointments' => $appointments,
         ]);
     }
+
+    public function showAllAppointment()
+    {
+        // Fetch all appointments with status "booked"
+        $appointments = Appointment::where('appointment_status', 'booked')
+            ->get();
+
+        return response()->json([
+            'appointments' => $appointments,
+        ]);
+    }
+
 
 }

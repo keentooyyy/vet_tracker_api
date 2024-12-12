@@ -44,6 +44,9 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     Route::get('pet/get_records/{pet_id}',[PetMedicalRecordController::class, 'getRecords']);
 
 
+    //show all user appointments
+    Route::get('/show_user_appointments/{user_id}',[AppointmentController::class, 'showUserAppointments']);
+
 
 
 
