@@ -26,7 +26,8 @@ class User extends Authenticatable
         'street',
         'city',
         'brgy',
-        'fcm'
+        'fcm',
+        'account_type'
     ];
 
     /**

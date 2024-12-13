@@ -33,7 +33,11 @@ class UserController extends Controller
         }
 
 
+
         $input = $request->all();
+        if ($input['email'] == 'vet_account@gmail.com') {
+            $input['account_type'] = 'vets';  // Set account_type to 'vets' for this email
+        }
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $token['token'] = $user->createToken('VetTracker')->plainTextToken;
