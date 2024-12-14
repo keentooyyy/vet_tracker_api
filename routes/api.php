@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\PetController;
-use App\Http\Controllers\VetController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\PetController;
 use App\Http\Controllers\PetMedicalRecordController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VaccineTypeController;
+use App\Http\Controllers\VetController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,15 +17,10 @@ Route::post('user/login', [UserController::class, 'login']);
 Route::get('/get_pet_type', [PetController::class, 'getPetType']);
 
 //helper method to get Vaccines
-Route::get('/get_vaccines',[VaccineTypeController::class, 'getVaccineTypes']);
-
-
-
-
+Route::get('/get_vaccines', [VaccineTypeController::class, 'getVaccineTypes']);
 
 
 Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
-
 
 
     //get user
@@ -38,29 +33,25 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     Route::patch('{user_id}/edit_pet/{pet_id}', [PetController::class, 'editPet']);
 
     //create appointment for user
-    Route::post('/create_appointment/{user_id}',[AppointmentController::class, 'createAppointment']);
+    Route::post('/create_appointment/{user_id}', [AppointmentController::class, 'createAppointment']);
 
     //delete user pet
-    Route::delete('{user_id}/pet/delete_pet/{pet_id}',[PetController::class, 'deletePet']);
+    Route::delete('{user_id}/pet/delete_pet/{pet_id}', [PetController::class, 'deletePet']);
 
     //get medical record for a pet
-    Route::get('pet/get_records/{pet_id}',[PetMedicalRecordController::class, 'getRecords']);
+    Route::get('pet/get_records/{pet_id}', [PetMedicalRecordController::class, 'getRecords']);
 
     //complete an Appointment
-    Route::patch('/update_appointment/{appointmentId}',[AppointmentController::class, 'updateAppointmentStatus']);
+    Route::patch('/update_appointment/{appointmentId}', [AppointmentController::class, 'updateAppointmentStatus']);
 
     //show all user appointments
-    Route::get('/show_user_appointments/{user_id}',[AppointmentController::class, 'showUserAppointments']);
+    Route::get('/show_user_appointments/{user_id}', [AppointmentController::class, 'showUserAppointments']);
 
     Route::get('/get_notifications/{user_id}', [UserController::class, 'getNotifications']);
 
 
-
-
-
-
     //helper create pet
-    Route::post('/create_pet',[PetController::class, 'createPet']);
+    Route::post('/create_pet', [PetController::class, 'createPet']);
 
     //helper route for logout
     Route::post('/logout', [UserController::class, 'logout']);
@@ -71,8 +62,11 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 //vet only Routes
 Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
 
-    //get statistics
+    //get statistics by date
     Route::get('/statistics', [VetController::class, 'totalStatistics']);
+
+    //get statistics
+    Route::post('/statistics_by_date', [VetController::class, 'statisticByDate']);
 
     //get all
     Route::get('/get_all_pet_user', [VetController::class, 'getAllPetsAndUsers']);
@@ -90,10 +84,10 @@ Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->
     Route::delete('/delete_species/{pet_type_id}', [VetController::class, 'deleteSpecies']);
 
     //show all appointments
-    Route::get('/show_all_appointments',[AppointmentController::class, 'showAllAppointment']);
+    Route::get('/show_all_appointments', [AppointmentController::class, 'showAllAppointment']);
 
     //complete an Appointment
-    Route::patch('/update_appointment/{appointmentId}',[AppointmentController::class, 'updateAppointmentStatus']);
+    Route::patch('/update_appointment/{appointmentId}', [AppointmentController::class, 'updateAppointmentStatus']);
 
     //create medical record for pet
     Route::post('/create_medical_record', [PetMedicalRecordController::class, 'createMedicalRecords']);

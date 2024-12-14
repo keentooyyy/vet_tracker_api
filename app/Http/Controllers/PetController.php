@@ -59,6 +59,7 @@ class PetController extends Controller
             'name' => 'required|string',
             'breed' => 'required|string',
             'birthdate' => 'required|date|date_format:Y-m-d',
+            'gender' => 'required|in:male,female',
         ]);
 
         if ($validator->fails()) {
