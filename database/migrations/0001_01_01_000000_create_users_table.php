@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->enum('account_type', ['vets', 'users'])->default('users');
             $table->string('email')->unique();
-            $table->string('fcm_token')->nullable(); // For Firebase notifications
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('contact_number')->nullable();
+//            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

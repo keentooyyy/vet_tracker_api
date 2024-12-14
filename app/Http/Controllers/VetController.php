@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
+use App\Models\PetMedicalRecord;
 use App\Models\PetType;
 use App\Models\User;
 use App\Models\VaccineType;
@@ -62,6 +63,46 @@ class VetController extends Controller
 
         return response()->json([
             'type' => $pet_type
+        ]);
+    }
+
+    public function totalStatistics()
+    {
+        $total_vaccinated = PetMedicalRecord::with('vaccine')
+            ->whereHas('vaccine', function ($query) {
+                $query->whereRaw('LOWER(name) != ?', ['general checkup']); // Exclude "General Check Up" (case-insensitive)
+            })
+            ->count();
+
+        $total_checkups = PetMedicalRecord::with('vaccine')
+            ->whereHas('vaccine', function ($query) {
+                $query->whereRaw('LOWER(name) = ?', ['general checkup']); // Include "General Check Up" (case-insensitive)
+            })
+            ->count();
+
+        $total_canine = Pet::with('petType')->whereHas('petType', function ($query) {
+            $query->whereRaw('LOWER(type) = ?', ['canine']); // Exclude "canine" (case-insensitive)
+        })
+            ->count();
+
+        $total_feline = Pet::with('petType')->whereHas('petType', function ($query) {
+            $query->whereRaw('LOWER(type) = ?', ['feline']); // Include "feline" (case-insensitive)
+        })
+            ->count();
+
+        $total_male = Pet::whereRaw('LOWER(gender) = ?', ['male'])->count();
+        $total_female = Pet::whereRaw('LOWER(gender) = ?', ['female'])->count();
+        $total_others = Pet::whereRaw('LOWER(gender) = ?', ['other species'])->count();
+
+
+        return response()->json([
+            'total_vaccinated' => $total_vaccinated,
+            'total_checkups' => $total_checkups,
+            'total_canine' => $total_canine,
+            'total_feline' => $total_feline,
+            'total_male' => $total_male,
+            'total_female' => $total_female,
+            'total_others' => $total_others,
         ]);
     }
 

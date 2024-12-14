@@ -22,7 +22,10 @@ Route::get('/get_vaccines',[VaccineTypeController::class, 'getVaccineTypes']);
 
 
 
+
+
 Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
+
 
 
     //get user
@@ -67,6 +70,9 @@ Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
 
 //vet only Routes
 Route::middleware(['auth:sanctum', 'check.account.type:vets'])->prefix('vets')->group(function () {
+
+    //get statistics
+    Route::get('/statistics', [VetController::class, 'totalStatistics']);
 
     //get all
     Route::get('/get_all_pet_user', [VetController::class, 'getAllPetsAndUsers']);
