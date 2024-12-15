@@ -98,9 +98,14 @@ class VetController extends Controller
         })
             ->count();
 
+        $total_others = Pet::with('petType')->whereHas('petType', function ($query) {
+            $query->whereRaw('LOWER(type) = ?', ['other species']); // Include "feline" (case-insensitive)
+        })
+            ->count();
+
+
         $total_male = Pet::whereRaw('LOWER(gender) = ?', ['male'])->count();
         $total_female = Pet::whereRaw('LOWER(gender) = ?', ['female'])->count();
-        $total_others = Pet::whereRaw('LOWER(gender) = ?', ['other species'])->count();
 
 
         return response()->json([
@@ -163,12 +168,37 @@ class VetController extends Controller
             })
             ->count();
 
+        $anitBioticCount = PetMedicalRecord::with('vaccine')
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->whereHas('vaccine', function ($query) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower('anti-biotic') . '%']); // Case-insensitive search
+            })
+            ->count();
+
+        $castrationCount = PetMedicalRecord::with('vaccine')
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->whereHas('vaccine', function ($query) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower('castration') . '%']); // Case-insensitive search
+            })
+            ->count();
+
+        $spayingCount = PetMedicalRecord::with('vaccine')
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->whereHas('vaccine', function ($query) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower('spaying') . '%']); // Case-insensitive search
+            })
+            ->count();
+
+
         // Return the response with the counts for each record type
         return response()->json([
             'total_5_in_1_shots' => $fiveInOneCount,
             'total_general_checkups' => $generalCheckupCount,
             'total_anti_rabies_shots' => $antiRabiesCount,
             'total_de_worm_shots' => $deWormCount,
+            'total_anti_biotic_shots' => $anitBioticCount,
+            'total_castration' => $castrationCount,
+            'total_spaying' => $spayingCount,
         ]);
     }
 
