@@ -18,13 +18,12 @@ class UserController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email|unique:users',
-            'contact number' => 'required|numeric',
+            'contact_number' => 'required|numeric',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
             'brgy' => 'required',
             'city' => 'required',
             'street' => 'required',
-            'fcm' => 'sometimes',
         ]);
         if ($validator->fails()) {
             return response()->json([
