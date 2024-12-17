@@ -99,20 +99,27 @@ class AppointmentController extends Controller
             'appointment_status' => $request->appointment_status
         ]);
 
-
         $send_to_user_id = $appointment->user_id;
 
-        // Get the pet relationship and pet's name
+// Get the pet relationship and pet's name
         $pet = $appointment->pet; // Assuming Appointment has a 'pet' relationship
         $pet_name = $pet ? $pet->name : 'Unknown pet'; // Handle cases where pet is not found
 
-        // Create the notification
+// Determine the status message
+        $status_message = match ($request->appointment_status) {
+            'completed' => 'approved',
+            'canceled' => 'canceled',
+            default => $request->appointment_status, // For any other statuses
+        };
+
+// Create the notification
         Notification::create([
             'user_id' => $send_to_user_id,
-            'title' => 'Appointment ' . $request->appointment_status,
+            'title' => 'Appointment ' . ucfirst($status_message),
             'appointment_id' => $appointmentId,
-            'message' => 'The vet has marked the appointment for ' . $pet_name . ' as ' . $request->appointment_status,
+            'message' => 'The vet has marked the appointment for ' . $pet_name . ' as ' . $status_message,
         ]);
+
 
         return response()->json([
             'message' => 'Appointment status updated successfully.',
