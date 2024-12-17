@@ -84,7 +84,7 @@ class VetController extends Controller
 
         $total_checkups = PetMedicalRecord::with('vaccine')
             ->whereHas('vaccine', function ($query) {
-                $query->whereRaw('LOWER(name) = ?', ['general checkup']); // Include "General Check Up" (case-insensitive)
+                $query->whereRaw('LOWER(name) = ?', ['general check-up']); // Include "General Check Up" (case-insensitive)
             })
             ->count();
 
@@ -150,7 +150,7 @@ class VetController extends Controller
         $generalCheckupCount = PetMedicalRecord::with('vaccine')
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->whereHas('vaccine', function ($query) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower('general checkup') . '%']); // Case-insensitive search
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower('general check-up') . '%']); // Case-insensitive search
             })
             ->count();
 
